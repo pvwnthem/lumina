@@ -18,6 +18,15 @@ export class Parser {
         return this.tokens.shift() as TokenT;
     }
 
+    private expect (type: TokenE, message: string): TokenT {
+        const prev = this.tokens.shift() as TokenT;
+        if (!prev || prev.type != type) {
+            throw new Error(message);
+        }
+
+        return prev;
+    }
+
     public produceAST (input: string): AST.ProgramT {
 
         this.tokens = tokenize(input);
@@ -84,6 +93,15 @@ export class Parser {
                 return { type: "Identifier", symbol: this.consume().value } as AST.IdentifierT;
             case TokenE.Number:
                 return { type: "NumberLiteral", value: parseFloat(this.consume().value) } as AST.NumberLiteralT;
+            case TokenE.OpenParenthesis:
+                this.consume();
+                const expression = this.parseExpression();
+                this.expect(
+                    TokenE.CloseParenthesis,
+                    `Expected closing parenthesis, got ${this.at().value}`
+                )
+                return expression;
+            
             default:
                 throw new Error(`Unexpected token: ${this.at().value}`);
         }
