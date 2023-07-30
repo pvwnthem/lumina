@@ -14,7 +14,18 @@ export function tokenize (input: string) {
 
     while ( source.length > 0 ) {
         switch ( source[0] ) {
-            
+            case "(":
+                tokens.push(token(source.shift()!, TokenE.OpenParenthesis));
+                break;
+            case ")":
+                tokens.push(token(source.shift()!, TokenE.CloseParenthesis));
+                break;
+            case "=":
+                tokens.push(token(source.shift()!, TokenE.Equals));
+                break;
+            case "+" || "-" || "*" || "/":
+                tokens.push(token(source.shift()!, TokenE.BinaryOperator));
+                break;
         }
     }
 }
