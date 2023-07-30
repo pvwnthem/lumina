@@ -83,7 +83,8 @@ export function tokenize (input: string): TokenT[] {
 
     return tokens;
 }
-
+/*
 for (const token of tokenize("int x = 2 + 2;")) {
     console.log(token);
 }
+*/
