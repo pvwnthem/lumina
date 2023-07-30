@@ -1,5 +1,5 @@
 import { KEYWORDS } from "./keywords";
-import { Token } from "./types/Token.type";
+import { TokenT } from "./types/Token.type";
 import { TokenE } from "./types/TokenE.enum";
 
 export function token (value: string, type: TokenE) {
@@ -21,8 +21,8 @@ function isSkippable (char: string) {
     return char.length > 0 &&  char === " " || char === "\t" || char === "\n";
 }
 
-export function tokenize (input: string): Token[] {
-    const tokens = new Array<Token>();
+export function tokenize (input: string): TokenT[] {
+    const tokens = new Array<TokenT>();
     const source = input.split("");
 
     while ( source.length > 0 ) {

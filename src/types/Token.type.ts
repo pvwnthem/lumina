@@ -1,6 +1,6 @@
 import { TokenE } from "./TokenE.enum";
 
-export interface Token {
+export interface TokenT {
     value: string;
     type: TokenE;
 }
