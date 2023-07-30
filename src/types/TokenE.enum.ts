@@ -5,5 +5,6 @@ export enum TokenE {
     OpenParenthesis,
     CloseParenthesis,
     BinaryOperator,
-    Let,
+    Int,
+    Semicolon,
 }
