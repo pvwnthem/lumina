@@ -43,9 +43,27 @@ export class Parser {
     }
 
     private parseAdditiveExpression (): AST.ExpressionT {
-        let expression = this.parsePrimary();
+        let expression = this.parseMultiplicativeExpression();
 
         while (this.at().type === TokenE.BinaryOperator && (this.at().value === "+" || this.at().value === "-")) {
+            const operator = this.consume().value;
+            const right = this.parseMultiplicativeExpression();
+
+            expression = {
+                type: "BinaryExpression",
+                operator,
+                left: expression,
+                right
+            } as AST.BinaryExpressionT;
+        }
+
+        return expression;
+    }
+
+    private parseMultiplicativeExpression (): AST.ExpressionT {
+        let expression = this.parsePrimary();
+
+        while (this.at().type === TokenE.BinaryOperator && (this.at().value === "*" || this.at().value === "/" || this.at().value === "%")) {
             const operator = this.consume().value;
             const right = this.parsePrimary();
 

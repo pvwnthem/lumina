@@ -40,6 +40,7 @@ export function tokenize (input: string): TokenT[] {
             case "-":
             case "*":
             case "/":
+            case "%":
                 tokens.push(token(source.shift()!, TokenE.BinaryOperator));
                 break;
             case ";":
