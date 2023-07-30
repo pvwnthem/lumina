@@ -79,9 +79,7 @@ export function tokenize (input: string): TokenT[] {
         }
     }
 
-    if (!tokens.some(token => token.type === TokenE.Semicolon)) {
-        throw new Error("Missing semicolon");
-    }
+    tokens.push({type: TokenE.EOF, value: "EOF"});
 
     return tokens;
 }

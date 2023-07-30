@@ -7,4 +7,5 @@ export enum TokenE {
     BinaryOperator,
     Int,
     Semicolon,
+    EOF,
 }
