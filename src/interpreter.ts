@@ -1,10 +1,10 @@
 import Environment from "../lib/runtime/environment";
-import { NullValue, NumberValue, Value } from "../lib/runtime/values";
+import { NumberValue, Value } from "../lib/runtime/values";
 import { BinaryExpressionT, IdentifierT, NumberLiteralT, ProgramT, StatementT } from "./ast";
-import { TokenE } from "./types/TokenE.enum";
+import { MAKE_NULL } from "./macros";
 
 export function evaluateProgram (program: ProgramT, env: Environment): Value {
-    let result: Value = { type: "null", value: "null" } as NullValue;
+    let result: Value = MAKE_NULL();
 
     for (const statement of program.body) {
         result = evaluate(statement, env);
@@ -51,7 +51,7 @@ export function evaluateBinaryExpression (binop: BinaryExpressionT, env: Environ
         return evaluateBinaryExpressionNumber(binop.operator, left as NumberValue, right as NumberValue);
     }
 
-    return { type: "null", value: "null" } as NullValue;
+    return MAKE_NULL();
 }
 
 export function evaluate (ast: StatementT, env: Environment): Value {
@@ -62,8 +62,6 @@ export function evaluate (ast: StatementT, env: Environment): Value {
             return evaluateBinaryExpression(ast as BinaryExpressionT, env);
         case "Program":
             return evaluateProgram(ast as ProgramT, env);
-        case "NullLiteral":
-            return { value: "null", type: "null" } as NullValue;
         case "Identifier":
             return evaluateIdentifier(ast as IdentifierT, env);
         default:

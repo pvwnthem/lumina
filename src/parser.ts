@@ -94,11 +94,6 @@ export class Parser {
                 return { type: "Identifier", symbol: this.consume().value } as AST.IdentifierT;
             case TokenE.Number:
                 return { type: "NumberLiteral", value: parseFloat(this.consume().value) } as AST.NumberLiteralT;
-
-            case TokenE.Null:
-                this.consume();
-                return { type: "NullLiteral", value: "null" } as AST.NullLiteralT;
-
             case TokenE.OpenParenthesis:
                 this.consume();
                 const expression = this.parseExpression();
