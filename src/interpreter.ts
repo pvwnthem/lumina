@@ -1,6 +1,6 @@
 import Environment from "../lib/runtime/environment";
 import { NumberValue, Value } from "../lib/runtime/values";
-import { BinaryExpressionT, IdentifierT, NumberLiteralT, ProgramT, StatementT } from "./ast";
+import { BinaryExpressionT, DeclarationT, ExpressionT, IdentifierT, NumberLiteralT, ProgramT, StatementT } from "./ast";
 import { MAKE_NULL } from "./macros";
 
 export function evaluateProgram (program: ProgramT, env: Environment): Value {
@@ -30,7 +30,15 @@ export function evaluateBinaryExpressionNumber (operator: string, left: NumberVa
     }
 }
 
-function evaluateIdentifier (identifier: IdentifierT, env: Environment): Value {
+export function evaluateVariableDeclaration (declaration: DeclarationT, env: Environment): Value {
+    const value = declaration.value 
+        ? evaluate(declaration.value as ExpressionT, env)
+        : MAKE_NULL();
+
+    return env.define(declaration.identifier, value);
+}
+
+export function evaluateIdentifier (identifier: IdentifierT, env: Environment): Value {
     const value = env.lookup(identifier.symbol);
     if (!value) {
         throw new Error("Variable not found!");
@@ -64,6 +72,8 @@ export function evaluate (ast: StatementT, env: Environment): Value {
             return evaluateProgram(ast as ProgramT, env);
         case "Identifier":
             return evaluateIdentifier(ast as IdentifierT, env);
+        case "Declaration":
+            return evaluateVariableDeclaration(ast as DeclarationT, env);
         default:
             throw new Error("Not implemented yet!");
     }

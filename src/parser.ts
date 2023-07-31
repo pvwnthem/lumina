@@ -45,7 +45,39 @@ export class Parser {
     }
 
     private parseStatement (): AST.StatementT {
-        return this.parseExpression();
+
+        switch (this.at().type) {
+            case TokenE.Int:
+                return this.parseDeclaration();
+            default:
+                return this.parseExpression();
+        }
+    }
+
+    private parseDeclaration (): AST.DeclarationT {
+        this.expect(TokenE.Int, "Expected 'int' keyword");
+
+        const constant = this.at().value === "const";
+        if (constant) {
+            this.consume();
+        }
+
+        const identifier = this.expect(TokenE.Identifier, "Expected identifier").value;
+
+        let value: AST.ExpressionT | undefined = undefined;
+
+        if (this.at().type === TokenE.Equals) {
+            this.consume();
+            value = this.parseExpression();
+        }
+
+        this.expect(TokenE.Semicolon, "Expected semicolon");
+        return {
+            type: "Declaration",
+            constant,
+            identifier,
+            value
+        } as AST.DeclarationT;
     }
 
     private parseExpression (): AST.ExpressionT {

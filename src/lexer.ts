@@ -10,20 +10,18 @@ export function token (value: string, type: TokenE) {
     }
 }
 
-export function isAlpha(src: string) {
-    return src.toUpperCase() != src.toLowerCase();
-  }
-  
+export function isAlpha (char: string) {
+    return char.length > 0 &&  char.toUpperCase() !== char.toLowerCase();
+}
 
-export function isSkippable(str: string) {
-    return str == " " || str == "\n" || str == "\t";
-  }
+function isInt(char: string) {
+    const bounds = ['0'.charCodeAt(0), '9'.charCodeAt(0)];
+    return char && char.length > 0 && char[0].length > 0 && char[0].charCodeAt(0) >= bounds[0] && char[0].charCodeAt(0) <= bounds[1];
+}
+function isSkippable (char: string) {
+    return char.length > 0 &&  char === " " || char === "\t" || char === "\n";
+}
 
-export function isInt(str: string) {
-    const c = str.charCodeAt(0);
-    const bounds = ["0".charCodeAt(0), "9".charCodeAt(0)];
-    return c >= bounds[0] && c <= bounds[1];
-  }
 
   
 export function tokenize (input: string, env: Environment): TokenT[] {
@@ -72,10 +70,8 @@ export function tokenize (input: string, env: Environment): TokenT[] {
                         
                         if (typeof reserved === "number") {
                             tokens.push(token(identifier, reserved));
-                        } else if (env.lookup(identifier) != undefined) {
-                            tokens.push(token(identifier, TokenE.Identifier));
                         } else {
-                            throw new Error(`Unexpected identifier: ${identifier}`);
+                            tokens.push(token(identifier, TokenE.Identifier));
                         }
                     } else if (isSkippable(source[0])) {
                         source.shift();
