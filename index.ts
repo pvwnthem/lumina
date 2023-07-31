@@ -1,13 +1,11 @@
 import { Parser } from "./src/parser";
 import { evaluate } from "./src/interpreter";
 import Environment from "./lib/runtime/environment";
-import { NumberValue } from "./lib/runtime/values";
 import { MAKE_BOOLEAN, MAKE_NULL, MAKE_NUMBER } from "./src/macros";
 
 async function main () {
     const parser = new Parser();
     const env = new Environment();
-    env.define("x", MAKE_NUMBER(10), false);
     env.define("true", MAKE_BOOLEAN(true), true);
     env.define("false", MAKE_BOOLEAN(false), true);
     env.define("null", MAKE_NULL(), true)
