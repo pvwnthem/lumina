@@ -56,38 +56,56 @@ export class Parser {
     }
 
     private parseDeclaration (): AST.DeclarationT {
-    const token = this.at();
-    if (token.type !== TokenE.Int && token.type !== TokenE.Const) {
-        throw new Error("Expected type keyword");
-    }
+        const token = this.at();
+        if (token.type !== TokenE.Int && token.type !== TokenE.Const) {
+            throw new Error("Expected type keyword");
+        }
 
-    const constant = token.type === TokenE.Const;
-    if (constant) {
-        this.consume();
-    }
+        const constant = token.type === TokenE.Const;
+        if (constant) {
+            this.consume();
+        }
 
-    this.expect(TokenE.Int, "Expected type keyword");
+        this.expect(TokenE.Int, "Expected type keyword");
 
-    const identifier = this.expect(TokenE.Identifier, "Expected identifier").value;
+        const identifier = this.expect(TokenE.Identifier, "Expected identifier").value;
 
-    let value: AST.ExpressionT | undefined = undefined;
+        let value: AST.ExpressionT | undefined = undefined;
 
-    if (this.at().type === TokenE.Equals) {
-        this.consume();
-        value = this.parseExpression();
-    }
+        if (this.at().type === TokenE.Equals) {
+            this.consume();
+            value = this.parseExpression();
+        }
 
-    this.expect(TokenE.Semicolon, "Expected semicolon");
-    return {
-        type: "Declaration",
-        constant,
-        identifier,
-        value
-    } as AST.DeclarationT;
+        this.expect(TokenE.Semicolon, "Expected semicolon");
+        return {
+            type: "Declaration",
+            constant,
+            identifier,
+            value
+        } as AST.DeclarationT;
 }
 
     private parseExpression (): AST.ExpressionT {
-        return this.parseAdditiveExpression();
+        return this.parseAssignmentExpression();
+    }
+
+    private parseAssignmentExpression (): AST.ExpressionT {
+        const left = this.parseAdditiveExpression();
+
+        if (this.at().type === TokenE.Equals) {
+            this.consume();
+            const value = this.parseAssignmentExpression();
+            this.expect(TokenE.Semicolon, "Expected semicolon");
+
+            
+            return {
+                type: "Assignment",
+                assignee: left,
+                value
+            } as AST.AssignmentT;
+        }
+        return left;
     }
 
     private parseAdditiveExpression (): AST.ExpressionT {
@@ -139,6 +157,7 @@ export class Parser {
                     TokenE.CloseParenthesis,
                     `Expected closing parenthesis, got ${this.at().value}`
                 )
+                this.expect(TokenE.Semicolon, "Expected semicolon")
                 return expression;
             
             default:

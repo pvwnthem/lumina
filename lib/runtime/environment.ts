@@ -32,7 +32,11 @@ export default class Environment {
             env.values.set(name, value);
         }
 
-        throw new Error(`Variable ${name} not defined!`);
+        if (!env.values.has(name)) {
+            throw new Error(`Variable ${name} not defined!`);
+        }
+
+        return value;
     }
 
     public lookup (name: string): Value {

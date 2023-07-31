@@ -1,6 +1,6 @@
 import Environment from "../lib/runtime/environment";
 import { NumberValue, Value } from "../lib/runtime/values";
-import { BinaryExpressionT, DeclarationT, ExpressionT, IdentifierT, NumberLiteralT, ProgramT, StatementT } from "./ast";
+import { AssignmentT, BinaryExpressionT, DeclarationT, ExpressionT, IdentifierT, NumberLiteralT, ProgramT, StatementT } from "./ast";
 import { MAKE_NULL } from "./macros";
 
 export function evaluateProgram (program: ProgramT, env: Environment): Value {
@@ -11,6 +11,23 @@ export function evaluateProgram (program: ProgramT, env: Environment): Value {
     }
 
     return result;
+}
+
+export function evaluateAssignment (assignment: AssignmentT, env: Environment): Value {
+    if (assignment.assignee.type !== "Identifier") {
+        throw new Error("Invalid assignment!");
+    }
+    const value = evaluate(assignment.value, env);
+    const assignee = assignment.assignee as IdentifierT;
+
+    // type check
+    if (value.type !== env.lookup(assignee.symbol)?.type) {
+        throw new Error("Type mismatch!");
+    }
+
+    env.assign(assignee.symbol, value);
+
+    return value;
 }
 
 export function evaluateBinaryExpressionNumber (operator: string, left: NumberValue, right: NumberValue): Value {
@@ -74,6 +91,8 @@ export function evaluate (ast: StatementT, env: Environment): Value {
             return evaluateIdentifier(ast as IdentifierT, env);
         case "Declaration":
             return evaluateVariableDeclaration(ast as DeclarationT, env);
+        case "Assignment":
+            return evaluateAssignment(ast as AssignmentT, env);
         default:
             throw new Error("Not implemented yet!");
     }

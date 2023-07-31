@@ -1,4 +1,4 @@
-export type NodeT = "Program" | "NumberLiteral" | "Identifier" | "BinaryExpression" | "Declaration";
+export type NodeT = "Program" | "NumberLiteral" | "Identifier" | "BinaryExpression" | "Declaration" | "Assignment";
 
 export interface StatementT {
     type: NodeT;    
@@ -33,4 +33,10 @@ export interface DeclarationT extends StatementT {
     constant: boolean;
     identifier: string;
     value?: ExpressionT;
+}
+
+export interface AssignmentT extends StatementT {
+    type: "Assignment";
+    assignee: ExpressionT;
+    value: ExpressionT;
 }
