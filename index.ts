@@ -1,4 +1,5 @@
 import { Parser } from "./src/parser";
+import { evaluate } from "./src/interpreter";
 
 async function main () {
     const parser = new Parser();
@@ -17,7 +18,9 @@ async function main () {
 
         try {
             const ast = parser.produceAST(input);
-            console.log(JSON.stringify(ast, null, 4));
+
+            const result = evaluate(ast);
+            console.log(result);
         } catch (e) {
             console.log(e);
         }

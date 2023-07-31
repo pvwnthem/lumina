@@ -1,4 +1,4 @@
-import { KEYWORDS } from "./keywords";
+import { KEYWORDS } from "../lib/keywords";
 import { TokenT } from "./types/Token.type";
 import { TokenE } from "./types/TokenE.enum";
 
@@ -64,9 +64,9 @@ export function tokenize (input: string): TokenT[] {
                         }
     
                         const reserved = KEYWORDS[identifier];
-    
-                        if (reserved === undefined) {
-                            tokens.push(token(identifier, TokenE.Identifier));
+                        
+                        if (typeof reserved === "number") {
+                            tokens.push(token(identifier, reserved));
                         } else {
                             tokens.push(token(identifier, reserved));
                         }
