@@ -1,3 +1,4 @@
+import Environment from '../lib/runtime/environment';
 import * as AST from './ast';
 import { tokenize } from './lexer';
 import { TokenT } from './types/Token.type';
@@ -27,9 +28,9 @@ export class Parser {
         return prev;
     }
 
-    public produceAST (input: string): AST.ProgramT {
+    public produceAST (input: string, env: Environment): AST.ProgramT {
 
-        this.tokens = tokenize(input);
+        this.tokens = tokenize(input, env);
 
         const program: AST.ProgramT = {
             type: "Program",

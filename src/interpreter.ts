@@ -1,11 +1,13 @@
+import Environment from "../lib/runtime/environment";
 import { NullValue, NumberValue, Value } from "../lib/runtime/values";
-import { BinaryExpressionT, NumberLiteralT, ProgramT, StatementT } from "./ast";
+import { BinaryExpressionT, IdentifierT, NumberLiteralT, ProgramT, StatementT } from "./ast";
+import { TokenE } from "./types/TokenE.enum";
 
-export function evaluateProgram (program: ProgramT): Value {
+export function evaluateProgram (program: ProgramT, env: Environment): Value {
     let result: Value = { type: "null", value: "null" } as NullValue;
 
     for (const statement of program.body) {
-        result = evaluate(statement);
+        result = evaluate(statement, env);
     }
 
     return result;
@@ -28,9 +30,18 @@ export function evaluateBinaryExpressionNumber (operator: string, left: NumberVa
     }
 }
 
-export function evaluateBinaryExpression (binop: BinaryExpressionT): Value {
-    const left = evaluate(binop.left);
-    const right = evaluate(binop.right);
+function evaluateIdentifier (identifier: IdentifierT, env: Environment): Value {
+    const value = env.lookup(identifier.symbol);
+    if (!value) {
+        throw new Error("Variable not found!");
+    }
+
+    return value;
+}
+
+export function evaluateBinaryExpression (binop: BinaryExpressionT, env: Environment): Value {
+    const left = evaluate(binop.left, env);
+    const right = evaluate(binop.right, env);
 
     if (left.type !== right.type) {
         throw new Error("Type mismatch!");
@@ -43,16 +54,18 @@ export function evaluateBinaryExpression (binop: BinaryExpressionT): Value {
     return { type: "null", value: "null" } as NullValue;
 }
 
-export function evaluate (ast: StatementT): Value {
+export function evaluate (ast: StatementT, env: Environment): Value {
     switch (ast.type) {
         case "NumberLiteral":
             return { value : ((ast as NumberLiteralT).value), type: "number" } as NumberValue;
         case "BinaryExpression":
-            return evaluateBinaryExpression(ast as BinaryExpressionT);
+            return evaluateBinaryExpression(ast as BinaryExpressionT, env);
         case "Program":
-            return evaluateProgram(ast as ProgramT);
+            return evaluateProgram(ast as ProgramT, env);
         case "NullLiteral":
             return { value: "null", type: "null" } as NullValue;
+        case "Identifier":
+            return evaluateIdentifier(ast as IdentifierT, env);
         default:
             throw new Error("Not implemented yet!");
     }

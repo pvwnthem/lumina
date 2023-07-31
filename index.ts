@@ -1,8 +1,12 @@
 import { Parser } from "./src/parser";
 import { evaluate } from "./src/interpreter";
+import Environment from "./lib/runtime/environment";
+import { NumberValue } from "./lib/runtime/values";
 
 async function main () {
     const parser = new Parser();
+    const env = new Environment();
+    env.define("x", { type: "number", value: 10 } as NumberValue);
     
     while (true) {
         const input = await new Promise<string>(resolve => {
@@ -17,9 +21,8 @@ async function main () {
         }
 
         try {
-            const ast = parser.produceAST(input);
-
-            const result = evaluate(ast);
+            const ast = parser.produceAST(input, env);
+            const result = evaluate(ast, env);
             console.log(result);
         } catch (e) {
             console.log(e);
