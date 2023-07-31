@@ -6,6 +6,7 @@ export enum TokenE {
     CloseParenthesis,
     BinaryOperator,
     Int,
+    Const,
     Semicolon,
     EOF,
 }

@@ -7,10 +7,10 @@ import { MAKE_BOOLEAN, MAKE_NULL, MAKE_NUMBER } from "./src/macros";
 async function main () {
     const parser = new Parser();
     const env = new Environment();
-    env.define("x", MAKE_NUMBER(10));
-    env.define("true", MAKE_BOOLEAN(true));
-    env.define("false", MAKE_BOOLEAN(false));
-    env.define("null", MAKE_NULL())
+    env.define("x", MAKE_NUMBER(10), false);
+    env.define("true", MAKE_BOOLEAN(true), true);
+    env.define("false", MAKE_BOOLEAN(false), true);
+    env.define("null", MAKE_NULL(), true)
     
     while (true) {
         const input = await new Promise<string>(resolve => {
@@ -26,6 +26,7 @@ async function main () {
 
         try {
             const ast = parser.produceAST(input, env);
+            console.log(ast)
             const result = evaluate(ast, env);
             console.log(result);
         } catch (e) {

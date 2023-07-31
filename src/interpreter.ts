@@ -35,7 +35,7 @@ export function evaluateVariableDeclaration (declaration: DeclarationT, env: Env
         ? evaluate(declaration.value as ExpressionT, env)
         : MAKE_NULL();
 
-    return env.define(declaration.identifier, value);
+    return env.define(declaration.identifier, value, declaration.constant);
 }
 
 export function evaluateIdentifier (identifier: IdentifierT, env: Environment): Value {

@@ -47,6 +47,7 @@ export class Parser {
     private parseStatement (): AST.StatementT {
 
         switch (this.at().type) {
+            case TokenE.Const:
             case TokenE.Int:
                 return this.parseDeclaration();
             default:
@@ -55,30 +56,35 @@ export class Parser {
     }
 
     private parseDeclaration (): AST.DeclarationT {
-        this.expect(TokenE.Int, "Expected 'int' keyword");
-
-        const constant = this.at().value === "const";
-        if (constant) {
-            this.consume();
-        }
-
-        const identifier = this.expect(TokenE.Identifier, "Expected identifier").value;
-
-        let value: AST.ExpressionT | undefined = undefined;
-
-        if (this.at().type === TokenE.Equals) {
-            this.consume();
-            value = this.parseExpression();
-        }
-
-        this.expect(TokenE.Semicolon, "Expected semicolon");
-        return {
-            type: "Declaration",
-            constant,
-            identifier,
-            value
-        } as AST.DeclarationT;
+    const token = this.at();
+    if (token.type !== TokenE.Int && token.type !== TokenE.Const) {
+        throw new Error("Expected type keyword");
     }
+
+    const constant = token.type === TokenE.Const;
+    if (constant) {
+        this.consume();
+    }
+
+    this.expect(TokenE.Int, "Expected type keyword");
+
+    const identifier = this.expect(TokenE.Identifier, "Expected identifier").value;
+
+    let value: AST.ExpressionT | undefined = undefined;
+
+    if (this.at().type === TokenE.Equals) {
+        this.consume();
+        value = this.parseExpression();
+    }
+
+    this.expect(TokenE.Semicolon, "Expected semicolon");
+    return {
+        type: "Declaration",
+        constant,
+        identifier,
+        value
+    } as AST.DeclarationT;
+}
 
     private parseExpression (): AST.ExpressionT {
         return this.parseAdditiveExpression();
