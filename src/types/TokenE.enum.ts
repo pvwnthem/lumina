@@ -1,4 +1,5 @@
 export enum TokenE {
+    Null,
     Number,
     Identifier,
     Equals,
